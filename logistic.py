@@ -53,9 +53,9 @@ for opt in l:
     print(np.mean(result_acc,axis=0))
     print(np.mean(result_loss,axis=0))
     print(np.mean(test_result,axis=0))
-    results_acc.append(np.mean(result_acc,axis=1))
-    results_loss.append(np.mean(result_loss,axis=1))
-    test_results.append(np.mean(test_result,axis=1))
+    results_acc.append(np.mean(result_acc,axis=0))
+    results_loss.append(np.mean(result_loss,axis=0))
+    test_results.append(np.mean(test_result,axis=0))
 
 df = pd.DataFrame(results_acc)
 df.to_csv("acc_train_log.csv")
