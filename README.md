@@ -20,7 +20,7 @@ network.compile(optimizer= opt,
 ### Results 
 I included 2 files to test the optimizers on mnist data (logistic + MLP).
 To run the code, simply go to command line an put ```python mlp.py``` or ```python logistic.py```. 
-My results are availaible in the folder *"results"*.
+The results are saved in different csv files. You can use matplotlib or any other library you want to plot the results.
 
 You will notice in the code that i put these 2 lines :
 ```python 
