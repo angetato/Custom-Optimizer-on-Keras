@@ -31,7 +31,7 @@ results_loss = []
 result_loss = []
 test_results = []
 test_result = []
-l= [Adam(amsgrad = False), Adam(amsgrad = True), AAdam(amsgrad = False), AAdam(amsgrad = False)]
+l= [Adam(amsgrad = False), Adam(amsgrad = True), AAdam(amsgrad = False), AAdam(amsgrad = True)]
 for opt in l:
 
     network.compile(optimizer= opt,
