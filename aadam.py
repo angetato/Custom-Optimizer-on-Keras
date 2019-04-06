@@ -35,9 +35,7 @@ class AAdam (Optimizer):
     @interfaces.legacy_get_updates_support
     def get_updates(self, loss, params):
         grads = self.get_gradients(loss, params)
-        p_grads = [K.zeros(K.int_shape(p), dtype=K.dtype(p)) for p in grads]
-        mems =  [K.zeros(K.int_shape(p), dtype=K.dtype(p)) for p in grads]
-        vals =  [K.ones(K.int_shape(p), dtype=K.dtype(p)) for p in grads]
+        p_grads = [K.zeros(K.int_shape(p), dtype=K.dtype(p)) for p in params]
         self.updates = [K.update_add(self.iterations, 1)]
 
         lr = self.lr
@@ -55,25 +53,24 @@ class AAdam (Optimizer):
             vhats = [K.zeros(K.int_shape(p), dtype=K.dtype(p)) for p in params]
         else:
             vhats = [K.zeros((1,1)) for _ in params]
-        self.weights = [self.iterations] + ms + vs + vhats + mems + p_grads
+        self.weights = [self.iterations] + ms + vs + vhats 
 
-        for p, g, m, v, vhat, p_grad, mem, val in zip(params, grads, ms, vs, vhats, p_grads, mems, vals):
-            mem_t = tf.where((tf.sign(p_grad) * tf.sign(g)) < 0,val,mem)
-            m_t = tf.where(tf.logical_and((tf.sign(p_grad) * tf.sign(g)) >=0, tf.equal(mem_t, 0)),(self.beta_1 * m) + (1. - self.beta_1) * (g+p_grad),(self.beta_1 * m) + (1. - self.beta_1) * g) 
-            #v_t = tf.where(tf.logical_and((tf.sign(p_grad) * tf.sign(g)) >=0, tf.equal(mem_t, 0)),(self.beta_2 * v) + (1. - self.beta_2) * K.square(g+p_grad),(self.beta_2 * v) + (1. - self.beta_2) * K.square(g))
+        for p, g, m, v, vhat, past_g in zip(params, grads, ms, vs, vhats, p_grads):
             v_t = (self.beta_2 * v) + (1. - self.beta_2) * K.square(g)
-            p_grad_t = g
+
             if self.amsgrad:
+                # past_g or m_t
+                m_t = tf.where(tf.logical_and(tf.abs(past_g - g)>0.001,past_g*g>0),(self.beta_1 * m) +  (1. - self.beta_1) *  (g + past_g),(self.beta_1 * m) + (1. - self.beta_1) * g) 
                 vhat_t = K.maximum(vhat, v_t)
                 p_t = p - lr_t * m_t / (K.sqrt(vhat_t) + self.epsilon)
                 self.updates.append(K.update(vhat, vhat_t))
             else:
+                # past_g or m_t
+                m_t = tf.where(tf.logical_and(tf.abs(past_g - g)>0.001,past_g*g>0),(self.beta_1 * m) +  (1. - self.beta_1) *  (g + past_g),(self.beta_1 * m) + (1. - self.beta_1) * g) 
                 p_t = p - lr_t * m_t / (K.sqrt(v_t) + self.epsilon)
-
             self.updates.append(K.update(m, m_t))
             self.updates.append(K.update(v, v_t))
-            self.updates.append(K.update(p_grad, p_grad_t))
-            self.updates.append(K.update(mem, mem_t))
+            self.updates.append(K.update(past_g, g))
             new_p = p_t
 
             # Apply constraints.
@@ -90,5 +87,5 @@ class AAdam (Optimizer):
                   'decay': float(K.get_value(self.decay)),
                   'epsilon': self.epsilon,
                   'amsgrad': self.amsgrad}
-        base_config = super(Adam, self).get_config()
+        base_config = super(AAdam, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
