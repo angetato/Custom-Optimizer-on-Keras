@@ -28,7 +28,7 @@ network.load_weights('initial_weights_log.h5')
 ```
 As I wanted to compare the optimizers, I kept the same initialization for the weights. In the first line I save the weigths (just once) and for the rest of the experiments I just read the weigths from the file. 
 
-### Accelerated First-Order optimization algorithms
+### Accelerating First-Order optimization algorithms
 Several stochastic optimization algorithms are currently available. In most cases, selecting the best optimizer for a given problem is not an easy task as they all provide adequate results. Therefore, instead of looking for yet another ’absolute’ best optimizer, accelerating existing ones according to the context might prove more effective. This paper presents a simple and intuitive technique to accelerate first-order optimization algorithms. When applied to first-order optimization algorithms, it converges much more quickly and achieves a better minimum for the loss function when compared to traditional algorithms. The proposed solution modifies the update rule, based on the variation of the direction of the gradient and the previous step taken during training. Several tests were conducted with SGD, AdaGrad, Adam and AMSGrad on three public datasets. Results clearly show that the proposed technique, as tested in the field, has the potential to improve the performance of existing optimization algorithms.
 
  It is implemented as follows (AAdam)
