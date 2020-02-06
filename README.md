@@ -1,6 +1,8 @@
 # Custom-Optimizer-on-Keras
 ASGD, AAdaGrad, Adam, AMSGrad, AAdam and AAMSGrad - See below for details about this Accelerated-optimizers
 
+Selected as "Spotlight student abstract" at AAAI2020 ([pdf file](https://github.com/angetato/Custom-Optimizer-on-Keras/blob/master/Improving_First_Order_Optimization_Algorithms__Student_Abstract_.pdf) is available)
+
 ### Requirements
 
 * Keras version >= 2.0.7 )
